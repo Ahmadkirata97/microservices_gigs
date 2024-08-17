@@ -2,10 +2,15 @@ from flask import jsonify, request, Blueprint
 from Helper_api.requests import Requests
 from Helper_api.elastic import logger
 from Helper_api.errorhandlers import ServerError
+from Redis_Api.gateway_cach import GateWayCach 
 from dotenv import load_dotenv
+import socketio
 import os 
 
 
+
+socket_io = socketio.Server()
+gateway_cache = GateWayCach()
 load_dotenv('/usr/src/app/.env')
 service_url = os.getenv('AUTH_BASE_URL')
 base_url = f"{service_url}/api/v1/auth"
@@ -88,7 +93,7 @@ def resendEmail():
         logger.error(f"Error in resendEmail() Function, the Error is : {str(err)}")
         raise ServerError("Internal Server Error", "resendEmail() Function")
     
-
+@auth_blue_print.route('/refresh-token', methods=['GET'])
 def getRefreshToken(username):
     try:
         response = auth_client.makeRequest(endpoint=f"refresh-token/{username}", service_token='auth')
@@ -107,6 +112,26 @@ def searchGigs():
         raise ServerError("Internal Server Error", "searchGigs() Function")
         
 
+@auth_blue_print.route('/logged-in-user', methods=['GET'])
+def getLoggedInUsers():
+    result = gateway_cache.getLoggedInUsersFromCash('LoggedInUsers') 
+    socket_io.emit('online', result)
+    response = {
+        'Message': 'User is online',
+        'Response': result
+    }
+    return(jsonify(response))
+
+
+@auth_blue_print.route('/delete-loggedin-user/<string:username>', methods=['DELETE'])
+def removeLoggedOutUser():
+    result = gateway_cache.removeLoggedOutUserFromCash('LoggedInUsers', value=request.get_json()['username'])
+    socket_io.emit('online', result)
+    response = {
+        'Message': 'User is offline',
+        'response': result
+    }
+    return(jsonify(response))
 
     
 

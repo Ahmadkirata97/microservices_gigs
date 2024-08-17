@@ -27,6 +27,7 @@ def getCurrentBuyerByUsername():
         raise ServerError("Internal Server Error", "getCurrentUser() Function")
     
 @buyer_blue_print.route('/getbuyer-username', methods=['GET'])
+@custom_jwt_required
 def getBuyerByUsername():
     try:
         buyer_client.makeRequest(endpoint='getbuyer-username', service_token='buyers')
@@ -37,6 +38,7 @@ def getBuyerByUsername():
     
 
 @buyer_blue_print.route('getbuyer-email', methods=['GET'])
+@custom_jwt_required
 def getBuyerByEmail():
     try:
         buyer_client.makeRequest(endpoint='getbuyer-email', service_token='buyers')

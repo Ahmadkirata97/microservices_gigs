@@ -14,5 +14,5 @@ def uploadCloudinaryFile(file):
         api_secret= os.getenv('CLOUD_API_SECRET')
     )
     upload_result = cloudinary.uploader.upload(file)
-    image_url = upload_result['url']
-    return image_url
+    file_url = upload_result['url']
+    return file_url

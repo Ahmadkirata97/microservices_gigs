@@ -16,6 +16,7 @@ seller_blueprint = Blueprint('Seller_Routes', __name__, url_prefix='/api/v1/user
 
 
 @seller_blueprint.route('/getseller-id/<string:id>', methods=['GET'])
+@custom_jwt_required
 def getSellerById(id):
     try:
         response = seller_client.makeRequest(endpoint=f"getseller-id/{id}", service_token='sellers')
@@ -26,6 +27,7 @@ def getSellerById(id):
     
 
 @seller_blueprint.route('/getseller-username/<string:username>', methods=['GET'])
+@custom_jwt_required
 def getSellerByUsername(username):
     try:
         response = seller_client.makeRequest(endpoint=f"getseller-username/{username}", service_token='sellers')
@@ -35,7 +37,8 @@ def getSellerByUsername(username):
         raise ServerError("Internal Server Error", "getSellerById() Function")
 
 
-@seller_blueprint.route('/getseller-id/<int:count>', methods=['GET'])    
+@seller_blueprint.route('/getseller-id/<int:count>', methods=['GET'])
+@custom_jwt_required    
 def getRandomSellers():
     try:
         seller_client.makeRequest(endpoint='/getseller-random/<int:count>', service_token='sellers')
@@ -46,6 +49,7 @@ def getRandomSellers():
 
 
 @seller_blueprint.route('/create-seller', methods=['POST'])
+@custom_jwt_required
 def createSeller():
     try:
         response = seller_client.makeRequest(endpoint='create-seller', service_token='sellers')
@@ -56,6 +60,7 @@ def createSeller():
 
 
 @seller_blueprint.route('/updateseller-id/<string:id>', methods=['PUT'])
+@custom_jwt_required
 def updateSeller(id):
     try:
         response = seller_client.makeRequest(endpoint=f"updateseller-id/{id}", service_token='sellers')
@@ -65,6 +70,7 @@ def updateSeller(id):
         raise ServerError("Internal Server Error", "updateSeller() Function")
 
 @seller_blueprint.route('/seed-sellers/<int:count>', methods=['PUT'])
+@custom_jwt_required
 def seed(count):
     try:
         seller_client.makeRequest(endpoint=f"seed-sellers/{count}", service_token='sellers')

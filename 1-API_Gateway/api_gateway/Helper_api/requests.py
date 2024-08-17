@@ -1,4 +1,5 @@
-from flask import jsonify, request
+from flask import request
+from flask_jwt_extended import get_jwt
 from dotenv import load_dotenv
 from Helper_api.cloudinary import uploadCloudinaryFile
 import jwt 
@@ -23,7 +24,6 @@ class Requests():
     
     
     def makeRequest(self,endpoint, service_token):
-        print('Data in the Request: ', request.get_data())
         print('URL of the Destination Service is :', self.service_url)
         jwt_token = self.getJwtToken(service_token=service_token)
         headers = {
@@ -31,16 +31,18 @@ class Requests():
             'Content-Type': 'application/json'
         }
         url = f"{self.service_url}/{endpoint}"
+        data = dict(request.form)
+        data['currentUser'] = get_jwt()
         if request.files:
-            image = request.files.get('profile_pic')
-            image_url = uploadCloudinaryFile(image)
-            data = {
-                'username': request.form.get('username'),
-                'email': request.form.get('email'),
-                'password': request.form.get('password'),
-                'country': request.form.get('country'),
-                'profile_pic': image_url,
-            }
+            profile_pic = request.files.get('profile_pic')
+            file = request.files.get('file')
+            data = dict(request.form)
+            if profile_pic is not None :
+                image_url = uploadCloudinaryFile(profile_pic)
+                data['profile_pic'] = image_url
+            elif file is not None:
+                file_url = uploadCloudinaryFile(file)
+                data['file'] = file_url
             response = requests.request(
                 method= request.method,
                 url= url,
@@ -55,7 +57,7 @@ class Requests():
                 method= request.method,
                 url= url,
                 headers= headers,
-                json= dict(request.form),
+                json= data,
                 params= request.args,
                 cookies= request.cookies,
                 allow_redirects= False

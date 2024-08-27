@@ -1,6 +1,7 @@
 FROM python
 
-WORKDIR /usr/src/app/
+
+WORKDIR /usr/src/app
 
 RUN apt update && apt install -y gcc python3-dev musl-dev default-libmysqlclient-dev build-essential
 
@@ -10,16 +11,23 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # ensure python output is sent directly to terminal 
 ENV PYTHONUNBUFFERED 1
 
-COPY 4-User_Service/Users/packages.txt .
+COPY 3-Authentication_Service/auth/packages.txt .
 
 RUN pip install --upgrade pip
 
 RUN pip install -r packages.txt
 
 
-WORKDIR /usr/src/app/Source
+
+# COPY User_Service/user_serv/requirements.txt .
+
+# RUN pip install -r requirements.txt
+
+# COPY entrypoint.sh .
 
 
-ENTRYPOINT ["python", "main.py"]
+# RUN chmod +x entrypoint.sh
+
+ENTRYPOINT ["python", "app.py"]
 
 # ENTRYPOINT [ "/usr/src/app/entrypoint.sh" ]

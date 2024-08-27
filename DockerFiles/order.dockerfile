@@ -10,7 +10,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # ensure python output is sent directly to terminal 
 ENV PYTHONUNBUFFERED 1
 
-COPY 4-User_Service/Users/packages.txt .
+COPY 7-Order_Service/Order/packages.txt .
 
 RUN pip install --upgrade pip
 
@@ -21,5 +21,3 @@ WORKDIR /usr/src/app/Source
 
 
 ENTRYPOINT ["python", "main.py"]
-
-# ENTRYPOINT [ "/usr/src/app/entrypoint.sh" ]

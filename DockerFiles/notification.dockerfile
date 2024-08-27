@@ -14,16 +14,12 @@ RUN pip install --upgrade pip
 
 RUN pip install elasticsearch
 
+RUN pip install flask
 
-# COPY Notification_Service/Notification/requirements.txt .
+RUN pip install python-dotenv
 
 RUN pip install pika
 
-# COPY entrypoint.sh .
-
-
-# RUN chmod +x entrypoint.sh
-
+# ENTRYPOINT ["python", "app.py"]
 ENTRYPOINT ["python", "app.py"]
-
 # ENTRYPOINT [ "/usr/src/app/entrypoint.sh" ]
